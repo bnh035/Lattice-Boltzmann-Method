@@ -16,7 +16,7 @@ def importFoil(objs, fileName, Mx, P, wingLength, latticResolution, angle):
 	nodes = airFoil(fileName, wingLength, angle, latticResolution)
 
 	for point in nodes:
-		for y in range(point[1] + P[1], point[2] + P[1]):
+		for y in range(point[2] + P[1], point[1] + P[1]):
 			objs[y][point[0]+P[1]] = True
 
 	return objs
@@ -34,10 +34,11 @@ def main():
 
 	Nx = 800 # Number of nodes in the x direction
 	Ny = 200 # Number of nodes in the y direction
-	tau = 0.53 # Time constant for collision equation
-	Nt = 100 # Number of time steps
+	tau = 1 # Time constant for collision equation
+	Nt = 1000 # Number of time steps
 	Nl = 9 # Number of nodes around a lattice node
 	angle = 5
+	velocity = 6
 
 	foilNumber = 'naca0012'
 	foilPath = os.path.join(currentPath, r'../../Foils/' + foilNumber + '.csv')
@@ -48,7 +49,7 @@ def main():
 
 	F = np.ones((Ny, Nx, Nl)) + 0.01 * np.random.randn(Ny, Nx, Nl)
 
-	F[:, :, 3] = 2 # velocity in terms of relative speed of sound
+	F[:, :, 3] = velocity # velocity in terms of relative speed of sound
 
 	# setup object in lattice
 	obj = setupObjects(Ny, Nx, foilPath, angle)
@@ -121,7 +122,7 @@ def main():
 	print("\nSaving results...")
 	ani = animation.ArtistAnimation(f, ims, interval=50, blit=True, repeat_delay=1000)
 
-	saveName = "Results/" + foilNumber + "_" + str(angle) + "_" + str(Nx) + "x" + str(Ny) + "_" + str(Nt) + "s" + ".mp4"
+	saveName = "Results/" + foilNumber + "_" + str(velocity) + "_" + str(angle) + "_" + str(Nx) + "x" + str(Ny) + "_" + str(Nt) + "s" + ".mp4"
 
 	writer = animation.FFMpegWriter(
 		fps=15, metadata=dict(artist='Me'), bitrate=1800)

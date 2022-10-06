@@ -9,7 +9,7 @@ def rotateNode(angle, node):
     length = math.sqrt(node[0] ** 2 + node[1] ** 2)
     theta = math.atan2(node[1], node[0])
     
-    theta = theta + math.radians(-angle)
+    theta = theta + math.radians(angle)
     
     x = length * math.cos(theta)
     y = length * math.sin(theta)
@@ -74,8 +74,6 @@ def hollowHalfCylinder(objs, My, Mx, xc, yc, r1, r2):
 
 
 def airFoil(fileName, length, angle, resolution):
-    pp = pprint.PrettyPrinter(indent=4)
-
     nodes = []
     rotatedNodes = []
 
@@ -96,8 +94,14 @@ def airFoil(fileName, length, angle, resolution):
     ys2 = ys[len(ys)//2:]
 
     for x in range(0, length + 1, resolution):
-        yVal1 = int(round(abs(np.interp(x, xs1, ys1))))
-        yVal2 = int(round(abs(np.interp(x, xs2, ys2))))
+        yVal1 = np.interp(x, xs1, ys1)
+        yVal1 = int(round(abs(yVal1))*np.sign([yVal1]))
+        yVal2 = np.interp(x, xs2, ys2)
+        yVal2 = int(round(abs(yVal2))*np.sign([yVal2]))
         boundaryNodes.append([x, yVal1, yVal2])
+
+    with open("out.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(boundaryNodes)
 
     return boundaryNodes
